@@ -1,0 +1,45 @@
+name: Deploy Flutter Web to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # your default branch
+
+permissions:
+  contents: write  # required to push to gh-pages
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.0'  # match your Dart SDK
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build Flutter web
+        run: flutter build web --release
+
+      - name: Deploy to gh-pages
+        run: |
+          cd build/web
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote add origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git fetch origin gh-pages:gh-pages || echo "gh-pages does not exist yet"
+          git checkout gh-pages || git checkout -b gh-pages
+          git rm -r . || true
+          cp -r ../* .
+          git add .
+          git commit -m "Update Flutter web build" || echo "No changes to commit"
+          git push origin gh-pages
