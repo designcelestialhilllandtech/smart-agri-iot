@@ -31,7 +31,6 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Background
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -40,10 +39,8 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-
           Column(
             children: [
-              // Header
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
                 child: Row(
@@ -94,10 +91,7 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
               ),
-
               const Spacer(),
-
-              // Right side buttons
               Align(
                 alignment: Alignment.centerRight,
                 child: Padding(
@@ -113,10 +107,7 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               ),
-
               const Spacer(),
-
-              // Bottom buttons
               Padding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
@@ -188,60 +179,78 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// ------------------- Dashboard Page -------------------
+// ------------------- Dashboard with Split View -------------------
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final sites = [
-      {"title": "SITE-1", "image": "assets/site1.png"},
-      {"title": "SITE-2", "image": "assets/site2.png"},
-      {"title": "SITE-3", "image": "assets/site3.png"},
-      {"title": "SITE-4", "image": "assets/site4.png"},
-    ];
+  State<DashboardPage> createState() => _DashboardPageState();
+}
 
+class _DashboardPageState extends State<DashboardPage> {
+  String? _selectedSite;
+
+  final sites = [
+    {"title": "SITE-1", "image": "assets/site1.png"},
+    {"title": "SITE-2", "image": "assets/site2.png"},
+    {"title": "SITE-3", "image": "assets/site3.png"},
+    {"title": "SITE-4", "image": "assets/site4.png"},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Dashboard")),
-      body: ListView.builder(
-        itemCount: sites.length,
-        itemBuilder: (context, index) {
-          final site = sites[index];
-          return Card(
-            margin: const EdgeInsets.all(10),
-            child: ListTile(
-              leading: Image.asset(site["image"]!, width: 80, fit: BoxFit.cover),
-              title: Text(site["title"]!),
-              trailing: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => SiteDetailPage(siteName: site["title"]!)),
-                  );
-                },
-                child: const Text("GO"),
-              ),
+      body: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: ListView.builder(
+              itemCount: sites.length,
+              itemBuilder: (context, index) {
+                final site = sites[index];
+                return Card(
+                  margin: const EdgeInsets.all(10),
+                  child: ListTile(
+                    leading: Image.asset(site["image"]!, width: 80, fit: BoxFit.cover),
+                    title: Text(site["title"]!),
+                    trailing: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedSite = site["title"];
+                        });
+                      },
+                      child: const Text("GO"),
+                    ),
+                  ),
+                );
+              },
             ),
-          );
-        },
+          ),
+          Expanded(
+            flex: 5,
+            child: _selectedSite == null
+                ? const Center(child: Text("Select a site from the left"))
+                : SiteDetailPanel(siteName: _selectedSite!),
+          ),
+        ],
       ),
     );
   }
 }
 
-// ------------------- Site Detail Page -------------------
+// ------------------- Site Detail Panel (Tabs Inside) -------------------
 
-class SiteDetailPage extends StatefulWidget {
+class SiteDetailPanel extends StatefulWidget {
   final String siteName;
-  const SiteDetailPage({super.key, required this.siteName});
+  const SiteDetailPanel({super.key, required this.siteName});
 
   @override
-  State<SiteDetailPage> createState() => _SiteDetailPageState();
+  State<SiteDetailPanel> createState() => _SiteDetailPanelState();
 }
 
-class _SiteDetailPageState extends State<SiteDetailPage>
+class _SiteDetailPanelState extends State<SiteDetailPanel>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -256,28 +265,36 @@ class _SiteDetailPageState extends State<SiteDetailPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.siteName),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: "Site"),
-            Tab(text: "Farm Data"),
-            Tab(text: "Investment"),
-          ],
+    return Column(
+      children: [
+        Material(
+          color: Colors.blue,
+          child: TabBar(
+            controller: _tabController,
+            indicatorColor: Colors.white,
+            labelColor: Colors.white,
+            tabs: const [
+              Tab(text: "Site"),
+              Tab(text: "Farm Data"),
+              Tab(text: "Investment"),
+            ],
+          ),
         ),
-      ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          Center(child: Text("${widget.siteName} Overview")),
-          Center(child: Text("Farm Data for ${widget.siteName}")),
-          _buildInvestmentTable(),
-        ],
-      ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              Center(child: Text("${widget.siteName} Overview")),
+              Center(child: Text("Farm Data for ${widget.siteName}")),
+              _buildInvestmentTable(),
+            ],
+          ),
+        ),
+      ],
     );
   }
+
+  // ------------------- Investment / Income Table -------------------
 
   Widget _buildInvestmentTable() {
     return Padding(
@@ -368,9 +385,12 @@ class _SiteDetailPageState extends State<SiteDetailPage>
     );
   }
 
+  // ------------------- Add Dialog with Date Picker -------------------
+
   void _showAddDialog(String title, List<Map<String, dynamic>> dataList) {
     final TextEditingController nameController = TextEditingController();
     final TextEditingController amountController = TextEditingController();
+    DateTime selectedDate = DateTime.now();
 
     showDialog(
       context: context,
@@ -388,6 +408,31 @@ class _SiteDetailPageState extends State<SiteDetailPage>
               decoration: const InputDecoration(labelText: "Amount"),
               keyboardType: TextInputType.number,
             ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                const Text("Date: "),
+                TextButton(
+                  onPressed: () async {
+                    final picked = await showDatePicker(
+                      context: context,
+                      initialDate: selectedDate,
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                    );
+                    if (picked != null) {
+                      setState(() {
+                        selectedDate = picked;
+                      });
+                    }
+                  },
+                  child: Text(
+                    "${selectedDate.day}-${selectedDate.month}-${selectedDate.year}",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
         actions: [
@@ -403,7 +448,7 @@ class _SiteDetailPageState extends State<SiteDetailPage>
                     "name": nameController.text,
                     "amount": double.tryParse(amountController.text) ?? 0,
                     "date":
-                        "${DateTime.now().toLocal()}".split('.')[0],
+                        "${selectedDate.day}-${selectedDate.month}-${selectedDate.year}",
                   });
                   _saveToExcel();
                 });
@@ -417,6 +462,8 @@ class _SiteDetailPageState extends State<SiteDetailPage>
     );
   }
 
+  // ------------------- Excel Export -------------------
+
   Future<String> _saveToExcel() async {
     final excel = xls.Excel.createExcel();
     final xls.Sheet investmentSheet = excel['Investment'];
@@ -426,16 +473,15 @@ class _SiteDetailPageState extends State<SiteDetailPage>
     investmentSheet.appendRow([
       xls.TextCellValue("Name"),
       xls.TextCellValue("Amount"),
-      xls.TextCellValue("DateTime"),
+      xls.TextCellValue("Date"),
     ]);
-
     incomeSheet.appendRow([
       xls.TextCellValue("Name"),
       xls.TextCellValue("Amount"),
-      xls.TextCellValue("DateTime"),
+      xls.TextCellValue("Date"),
     ]);
 
-    // Investment data
+    // Data
     for (var item in _investmentList) {
       investmentSheet.appendRow([
         xls.TextCellValue(item["name"]),
@@ -443,8 +489,6 @@ class _SiteDetailPageState extends State<SiteDetailPage>
         xls.TextCellValue(item["date"]),
       ]);
     }
-
-    // Income data
     for (var item in _incomeList) {
       incomeSheet.appendRow([
         xls.TextCellValue(item["name"]),
