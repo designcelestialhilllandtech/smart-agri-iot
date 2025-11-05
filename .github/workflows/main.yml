@@ -3,12 +3,16 @@ name: Deploy Flutter Web to GitHub Pages
 on:
   push:
     branches:
-      - main  # or 'master' if that's your default
+      - main  # Triggers deploy when you push to main branch
 
 permissions:
   contents: write
   pages: write
   id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -29,7 +33,7 @@ jobs:
       - name: Build Flutter web
         run: flutter build web --release --base-href="/smart-agri-iot/"
 
-      - name: Upload build artifacts
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: build/web
@@ -40,6 +44,7 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
