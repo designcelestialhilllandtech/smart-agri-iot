@@ -46,7 +46,12 @@ dependencies:
   google_sign_in: ^6.2.1
   googleapis: ^13.2.0
   googleapis_auth: ^1.6.0
- 
+  file_picker: ^8.1.3
+  fl_chart: ^0.68.0
+  shared_preferences: ^2.3.2
+  math_expressions: ^2.2.0
+
+
 
 dev_dependencies:
   flutter_test:
@@ -114,3 +119,13 @@ flutter:
     - assets/site2.png
     - assets/site3.png
     - assets/site4.png
+    - assets/data.xlsx
+    - assets/weather.jpg
+    - assets/scale.png
+    - assets/farmdata.xlsx
+    - assets/farm_sensor_data_500_samples.xlsx
+    - assets/finance.png
+    - assets/tank.png
+    - assets/drip_irrigation.png
+    - assets/automation.png
+    - assets/home.png
