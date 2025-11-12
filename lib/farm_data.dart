@@ -132,23 +132,61 @@ class _FarmDataWidgetState extends State<FarmDataWidget> {
                         fontWeight: FontWeight.bold, fontSize: 16)),
                 IconButton(
                   icon: const Icon(Icons.play_arrow, color: Colors.black),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        title: Text("$title Combined Graph"),
-                        content: SizedBox(
-                          width: 400,
-                          height: 250,
-                          child: LineChart(LineChartData(
-                            gridData: const FlGridData(show: true),
-                            titlesData: const FlTitlesData(show: true),
-                            lineBarsData: lines,
-                          )),
-                        ),
+onPressed: () {
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: Text("$title - Separate Graphs by Sensor"),
+      content: SizedBox(
+        width: 450,
+        height: 400,
+        child: ListView(
+          children: grouped.entries.map((entry) {
+            final sensor = entry.key;
+            final values = entry.value;
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Sensor: $sensor",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  const SizedBox(height: 6),
+                  SizedBox(
+                    height: 180,
+                    child: LineChart(
+                      LineChartData(
+                        gridData: const FlGridData(show: true),
+                        titlesData: const FlTitlesData(show: false),
+                        borderData: FlBorderData(show: true),
+                        lineBarsData: [
+                          LineChartBarData(
+                            isCurved: true,
+                            color: color,
+                            spots: values
+                                .asMap()
+                                .entries
+                                .map((e) =>
+                                    FlSpot(e.key.toDouble(), e.value))
+                                .toList(),
+                          ),
+                        ],
                       ),
-                    );
-                  },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    ),
+  );
+},
+
                 ),
               ],
             ),

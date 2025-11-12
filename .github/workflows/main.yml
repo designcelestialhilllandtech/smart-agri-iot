@@ -3,7 +3,7 @@ name: Build & Push Flutter Web to gh-pages
 on:
   push:
     branches:
-      - main  # deploy every time main is updated
+      - main
 
 permissions:
   contents: write
@@ -31,6 +31,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git --work-tree build/web add --all
-          git commit -m "Deploy to gh-pages" || echo "No changes to commit"
-          git push origin HEAD:gh-pages --force
+          git fetch origin gh-pages || echo "No gh-pages branch yet"
+          git worktree add gh-pages
+          rm -rf gh-pages/*
+          cp -r build/web/* gh-pages/
+          cd gh-pages
+          git add --all
+          git commit -m "Deploy Flutter Web to gh-pages" || echo "No changes to commit"
+          git push origin gh-pages --force

@@ -5,8 +5,17 @@ import 'irrigation_page.dart';
 import 'ml_focus_page.dart';
 import 'alarm_page.dart';
 import 'notification_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const CelestialHilllandApp());
 }
 
@@ -17,15 +26,11 @@ class CelestialHilllandApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Celestial Hillland Tech',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: 'Arial',
-      ),
-      home: const HomePage(),
+home: const HomePage(),
     );
   }
 }
+
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "950880620199",
+    "project_id": "celestial-agri-iot",
+    "storage_bucket": "celestial-agri-iot.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:950880620199:android:ee1b7961f0bbe90d4e1582",
+        "android_client_info": {
+          "package_name": "com.example.flutterproj1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOzSXzkGZEaAbhlFcXJJ7h5DqHnb4hkI8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

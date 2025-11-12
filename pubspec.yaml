@@ -50,6 +50,11 @@ dependencies:
   fl_chart: ^0.68.0
   shared_preferences: ^2.3.2
   math_expressions: ^2.2.0
+  firebase_core: ^4.2.1
+  cloud_firestore: ^6.1.0
+  firebase_storage: ^13.0.4
+  geolocator: ^14.0.2
+
 
 
 
@@ -128,4 +133,8 @@ flutter:
     - assets/tank.png
     - assets/drip_irrigation.png
     - assets/automation.png
+    - assets/seed.png
+    - assets/harvest.png
     - assets/home.png
+
+
