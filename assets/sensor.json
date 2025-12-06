@@ -1,0 +1,117 @@
+{
+  "soil_moisture": [
+    { "timestamp": "2025-01-01 01:00", "sensor1": 80, "sensor2": 78, "sensor3": 75 },
+    { "timestamp": "2025-01-01 02:00", "sensor1": 82, "sensor2": 79, "sensor3": 76 },
+    { "timestamp": "2025-01-01 03:00", "sensor1": 85, "sensor2": 81, "sensor3": 78 },
+    { "timestamp": "2025-01-01 04:00", "sensor1": 87, "sensor2": 82, "sensor3": 79 },
+    { "timestamp": "2025-01-01 05:00", "sensor1": 89, "sensor2": 84, "sensor3": 80 },
+    { "timestamp": "2025-01-01 06:00", "sensor1": 90, "sensor2": 85, "sensor3": 82 },
+    { "timestamp": "2025-01-01 07:00", "sensor1": 92, "sensor2": 86, "sensor3": 84 },
+    { "timestamp": "2025-01-01 08:00", "sensor1": 94, "sensor2": 87, "sensor3": 86 },
+    { "timestamp": "2025-01-01 09:00", "sensor1": 95, "sensor2": 88, "sensor3": 87 },
+    { "timestamp": "2025-01-01 10:00", "sensor1": 93, "sensor2": 87, "sensor3": 85 },
+    { "timestamp": "2025-01-01 11:00", "sensor1": 91, "sensor2": 85, "sensor3": 84 },
+    { "timestamp": "2025-01-01 12:00", "sensor1": 89, "sensor2": 83, "sensor3": 82 },
+    { "timestamp": "2025-01-01 13:00", "sensor1": 87, "sensor2": 81, "sensor3": 80 },
+    { "timestamp": "2025-01-01 14:00", "sensor1": 85, "sensor2": 79, "sensor3": 78 },
+    { "timestamp": "2025-01-01 15:00", "sensor1": 83, "sensor2": 78, "sensor3": 76 },
+    { "timestamp": "2025-01-01 16:00", "sensor1": 84, "sensor2": 77, "sensor3": 75 },
+    { "timestamp": "2025-01-01 17:00", "sensor1": 86, "sensor2": 79, "sensor3": 76 },
+    { "timestamp": "2025-01-01 18:00", "sensor1": 88, "sensor2": 82, "sensor3": 78 },
+    { "timestamp": "2025-01-01 19:00", "sensor1": 90, "sensor2": 84, "sensor3": 80 },
+    { "timestamp": "2025-01-01 20:00", "sensor1": 91, "sensor2": 85, "sensor3": 82 },
+    { "timestamp": "2025-01-01 21:00", "sensor1": 92, "sensor2": 86, "sensor3": 83 },
+    { "timestamp": "2025-01-01 22:00", "sensor1": 89, "sensor2": 83, "sensor3": 80 },
+    { "timestamp": "2025-01-01 23:00", "sensor1": 87, "sensor2": 82, "sensor3": 79 },
+    { "timestamp": "2025-01-02 00:00", "sensor1": 85, "sensor2": 81, "sensor3": 78 },
+
+    { "timestamp": "2025-01-02", "sensor1": 84, "sensor2": 80, "sensor3": 77 },
+    { "timestamp": "2025-01-03", "sensor1": 83, "sensor2": 79, "sensor3": 76 },
+    { "timestamp": "2025-01-04", "sensor1": 82, "sensor2": 78, "sensor3": 75 },
+    { "timestamp": "2025-01-05", "sensor1": 81, "sensor2": 77, "sensor3": 74 },
+    { "timestamp": "2025-01-06", "sensor1": 80, "sensor2": 76, "sensor3": 73 },
+    { "timestamp": "2025-01-07", "sensor1": 79, "sensor2": 75, "sensor3": 72 },
+
+    { "timestamp": "2024-12-01", "sensor1": 78, "sensor2": 74, "sensor3": 71 },
+    { "timestamp": "2024-12-02", "sensor1": 77, "sensor2": 73, "sensor3": 70 },
+    { "timestamp": "2024-12-03", "sensor1": 76, "sensor2": 72, "sensor3": 69 },
+    { "timestamp": "2024-12-04", "sensor1": 75, "sensor2": 71, "sensor3": 68 },
+    { "timestamp": "2024-12-05", "sensor1": 74, "sensor2": 70, "sensor3": 67 },
+    { "timestamp": "2024-12-06", "sensor1": 73, "sensor2": 69, "sensor3": 66 },
+    { "timestamp": "2024-12-07", "sensor1": 72, "sensor2": 68, "sensor3": 65 },
+    { "timestamp": "2024-12-08", "sensor1": 71, "sensor2": 67, "sensor3": 64 },
+    { "timestamp": "2024-12-09", "sensor1": 70, "sensor2": 66, "sensor3": 63 },
+    { "timestamp": "2024-12-10", "sensor1": 69, "sensor2": 65, "sensor3": 62 },
+    { "timestamp": "2024-12-11", "sensor1": 68, "sensor2": 64, "sensor3": 61 },
+    { "timestamp": "2024-12-12", "sensor1": 67, "sensor2": 63, "sensor3": 60 },
+    { "timestamp": "2024-12-13", "sensor1": 66, "sensor2": 62, "sensor3": 59 },
+    { "timestamp": "2024-12-14", "sensor1": 65, "sensor2": 61, "sensor3": 58 },
+    { "timestamp": "2024-12-15", "sensor1": 64, "sensor2": 60, "sensor3": 57 },
+    { "timestamp": "2024-12-16", "sensor1": 63, "sensor2": 59, "sensor3": 56 },
+    { "timestamp": "2024-12-17", "sensor1": 62, "sensor2": 58, "sensor3": 55 },
+    { "timestamp": "2024-12-18", "sensor1": 61, "sensor2": 57, "sensor3": 54 },
+    { "timestamp": "2024-12-19", "sensor1": 60, "sensor2": 56, "sensor3": 53 },
+    { "timestamp": "2024-12-20", "sensor1": 59, "sensor2": 55, "sensor3": 52 }
+  ],
+
+  "ph": [
+    { "timestamp": "2025-01-01 01:00", "sensor1": 6.1, "sensor2": 6.4, "sensor3": 6.3 },
+    { "timestamp": "2025-01-01 02:00", "sensor1": 6.2, "sensor2": 6.5, "sensor3": 6.4 },
+    { "timestamp": "2025-01-01 03:00", "sensor1": 6.3, "sensor2": 6.6, "sensor3": 6.5 },
+    { "timestamp": "2025-01-01 04:00", "sensor1": 6.4, "sensor2": 6.7, "sensor3": 6.5 },
+    { "timestamp": "2025-01-01 05:00", "sensor1": 6.5, "sensor2": 6.6, "sensor3": 6.4 },
+
+    { "timestamp": "2025-01-02", "sensor1": 6.8, "sensor2": 6.9, "sensor3": 6.7 },
+    { "timestamp": "2025-01-03", "sensor1": 7.0, "sensor2": 7.1, "sensor3": 6.9 },
+    { "timestamp": "2025-01-04", "sensor1": 7.2, "sensor2": 7.3, "sensor3": 7.0 },
+    { "timestamp": "2025-01-05", "sensor1": 6.9, "sensor2": 7.0, "sensor3": 6.8 },
+
+    { "timestamp": "2024-12-01", "sensor1": 6.5, "sensor2": 6.6, "sensor3": 6.4 },
+    { "timestamp": "2024-12-05", "sensor1": 6.4, "sensor2": 6.5, "sensor3": 6.3 },
+    { "timestamp": "2024-12-10", "sensor1": 6.3, "sensor2": 6.4, "sensor3": 6.2 },
+    { "timestamp": "2024-12-15", "sensor1": 6.2, "sensor2": 6.3, "sensor3": 6.1 }
+  ],
+
+
+  "nitrogen": [
+    { "timestamp": "2025-01-01 01:00", "sensor1": 65, "sensor2": 70, "sensor3": 50 },
+    { "timestamp": "2025-01-01 02:00", "sensor1": 67, "sensor2": 72, "sensor3": 52 },
+
+    { "timestamp": "2025-01-02", "sensor1": 70, "sensor2": 75, "sensor3": 60 },
+    { "timestamp": "2025-01-03", "sensor1": 68, "sensor2": 74, "sensor3": 62 },
+    { "timestamp": "2025-01-04", "sensor1": 71, "sensor2": 76, "sensor3": 63 },
+
+    { "timestamp": "2024-12-01", "sensor1": 60, "sensor2": 65, "sensor3": 55 },
+    { "timestamp": "2024-12-05", "sensor1": 58, "sensor2": 62, "sensor3": 53 },
+    { "timestamp": "2024-12-10", "sensor1": 57, "sensor2": 61, "sensor3": 52 },
+    { "timestamp": "2024-12-15", "sensor1": 55, "sensor2": 60, "sensor3": 50 }
+  ],
+
+  "phosphorus": [
+    { "timestamp": "2025-01-01 01:00", "sensor1": 45, "sensor2": 50, "sensor3": 47 },
+    { "timestamp": "2025-01-01 02:00", "sensor1": 46, "sensor2": 51, "sensor3": 49 },
+
+    { "timestamp": "2025-01-02", "sensor1": 48, "sensor2": 52, "sensor3": 50 },
+    { "timestamp": "2025-01-03", "sensor1": 49, "sensor2": 53, "sensor3": 51 },
+    { "timestamp": "2025-01-04", "sensor1": 50, "sensor2": 54, "sensor3": 52 },
+
+    { "timestamp": "2024-12-01", "sensor1": 40, "sensor2": 45, "sensor3": 42 },
+    { "timestamp": "2024-12-05", "sensor1": 39, "sensor2": 43, "sensor3": 40 },
+    { "timestamp": "2024-12-10", "sensor1": 38, "sensor2": 42, "sensor3": 39 },
+    { "timestamp": "2024-12-15", "sensor1": 37, "sensor2": 41, "sensor3": 38 }
+  ],
+
+  "potassium": [
+    { "timestamp": "2025-01-01 01:00", "sensor1": 85, "sensor2": 80, "sensor3": 78 },
+    { "timestamp": "2025-01-01 02:00", "sensor1": 87, "sensor2": 82, "sensor3": 79 },
+
+    { "timestamp": "2025-01-02", "sensor1": 88, "sensor2": 84, "sensor3": 82 },
+    { "timestamp": "2025-01-03", "sensor1": 86, "sensor2": 83, "sensor3": 80 },
+    { "timestamp": "2025-01-04", "sensor1": 90, "sensor2": 88, "sensor3": 84 },
+
+    { "timestamp": "2024-12-01", "sensor1": 75, "sensor2": 70, "sensor3": 68 },
+    { "timestamp": "2024-12-05", "sensor1": 74, "sensor2": 69, "sensor3": 67 },
+    { "timestamp": "2024-12-10", "sensor1": 73, "sensor2": 68, "sensor3": 66 },
+    { "timestamp": "2024-12-15", "sensor1": 72, "sensor2": 67, "sensor3": 65 }
+  ]
+}
