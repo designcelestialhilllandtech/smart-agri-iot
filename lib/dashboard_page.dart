@@ -11,6 +11,9 @@ import 'package:geolocator/geolocator.dart';
 import 'farm_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'map_picker_page.dart';
+
 
 const String OPENWEATHER_API_KEY = '9fe0fffc423415be0b52229540367576'; // <-- PUT YOUR KEY
 
@@ -20,12 +23,14 @@ class DashboardPage extends StatefulWidget {
   @override
   State<DashboardPage> createState() => _DashboardPageState();
 }
+bool isEditingCoordinates = false;
 
 // NOTE: keys are Firestore document IDs (siteId)
 Map<String, List<Map<String, dynamic>>> siteInvestments = {};
 Map<String, List<Map<String, dynamic>>> siteIncomes = {};
 
 class _DashboardPageState extends State<DashboardPage>
+
     with SingleTickerProviderStateMixin {
   // ---------- CONTROLLERS ----------
   String selectedSiteId = "";
@@ -885,7 +890,7 @@ onChanged: (newIndex) async {
           const SizedBox(height: 16),
           _buildWeatherSection(),
           const SizedBox(height: 16),
-          _buildGeoSection(),
+
           const SizedBox(height: 30),
         ],
       ),
@@ -1032,46 +1037,68 @@ onChanged: (newIndex) async {
   }
 
   // WEATHER UI (unchanged apart from using latController/lonController)
-  Widget _buildWeatherSection() {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      elevation: 2,
-      margin: const EdgeInsets.all(8),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              "Smart Agriculture Weather",
-              style:
-                  TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
-            ),
-            const SizedBox(height: 12),
-            if (_weather != null) _buildTemperatureSummary(),
-            const SizedBox(height: 16),
-            _buildLatLonInputs(),
-            const SizedBox(height: 14),
-            _buildFetchButton(),
-            const SizedBox(height: 20),
-            _weather == null
-                ? const Text("Enter coordinates to fetch weather data")
-                : Column(
-                    children: [
-                      _buildAgriStatsRow(),
-                      const SizedBox(height: 16),
-                      _buildHumidityCircle(),
-                      const SizedBox(height: 16),
-                      _buildForecastRow(),
-                      const SizedBox(height: 20),
-                      _buildWeatherTrendGraph(),
-                    ],
-                  ),
-          ],
-        ),
+Widget _buildWeatherSection() {
+  return Card(
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+    elevation: 2,
+    margin: const EdgeInsets.all(8),
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Smart Agriculture Weather",
+            style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.green),
+          ),
+          const SizedBox(height: 12),
+
+          if (_weather != null) _buildTemperatureSummary(),
+
+          const SizedBox(height: 20),
+
+          _weather == null
+              ? const Text("Enter coordinates to fetch weather data")
+              : Column(
+                  children: [
+                    _buildAgriStatsRow(),
+                    const SizedBox(height: 16),
+
+                    _buildHumidityCircle(),
+                    const SizedBox(height: 16),
+
+                    _buildForecastRow(),
+                    const SizedBox(height: 20),
+
+                    _buildWeatherTrendGraph(),
+                  ],
+                ),
+
+          // -----------------------------------------
+          // LAT / LON MOVED TO BOTTOM
+          // -----------------------------------------
+          const SizedBox(height: 20),
+          const Divider(),
+          const SizedBox(height: 16),
+          const Text(
+            "Update Coordinates",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+
+          _buildLatLonInputs(),
+          const SizedBox(height: 16),
+
+          _buildFetchButton(),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildTemperatureSummary() {
     final temp = _weather!['main']['temp']?.toDouble() ?? 0.0;
@@ -1108,51 +1135,224 @@ onChanged: (newIndex) async {
       ),
     );
   }
+Widget _buildLatLonInputs() {
+  if (_selectedIndex == null) return SizedBox();
 
-  Widget _buildLatLonInputs() {
-    return Row(
-      children: [
-        Expanded(
-          child: TextField(
-            controller: latController,
-            decoration: InputDecoration(
-              labelText: "Latitude",
-              filled: true,
-              fillColor: Colors.green.shade50,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: TextField(
-            controller: lonController,
-            decoration: InputDecoration(
-              labelText: "Longitude",
-              filled: true,
-              fillColor: Colors.green.shade50,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  final site = _sites[_selectedIndex!];
 
-  Widget _buildFetchButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: _updateWeatherForSelectedSite,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.green,
-          padding: const EdgeInsets.all(14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+  bool isNewSite =
+      (site['latitude'] == '' || site['latitude'] == null) &&
+      (site['longitude'] == '' || site['longitude'] == null);
+
+  bool showEditable = isNewSite || isEditingCoordinates;
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+
+      // ----------- READ ONLY MODE -----------
+      if (!showEditable)
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Latitude: ${latController.text}",
+                      style: TextStyle(fontSize: 15)),
+                  SizedBox(height: 6),
+                  Text("Longitude: ${lonController.text}",
+                      style: TextStyle(fontSize: 15)),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+
+            ElevatedButton.icon(
+              onPressed: () {
+                setState(() => isEditingCoordinates = true);
+              },
+              icon: Icon(Icons.edit_location),
+              label: Text("Edit Coordinates"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
         ),
-        child: const Text("Get Weather", style: TextStyle(color: Colors.white)),
+
+      // ----------- EDIT MODE -----------
+      if (showEditable)
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            // Manual entry (unchanged)
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: latController,
+                    decoration: InputDecoration(
+                      labelText: "Latitude",
+                      filled: true,
+                      fillColor: Colors.green.shade50,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    controller: lonController,
+                    decoration: InputDecoration(
+                      labelText: "Longitude",
+                      filled: true,
+                      fillColor: Colors.green.shade50,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 12),
+
+            // GPS Location Button
+            ElevatedButton.icon(
+              onPressed: () async {
+                Position pos = await Geolocator.getCurrentPosition(
+                    desiredAccuracy: LocationAccuracy.high);
+                setState(() {
+                  latController.text = pos.latitude.toString();
+                  lonController.text = pos.longitude.toString();
+                });
+              },
+              icon: Icon(Icons.my_location),
+              label: Text("Use My GPS Location"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal,
+                foregroundColor: Colors.white,
+              ),
+            ),
+
+            SizedBox(height: 10),
+
+            // Google Maps Picker Button
+            ElevatedButton.icon(
+              onPressed: () async {
+                final LatLng? newPos = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => MapPickerPage(
+                      initialLat: double.tryParse(latController.text) ?? 0,
+                      initialLon: double.tryParse(lonController.text) ?? 0,
+                    ),
+                  ),
+                );
+
+                if (newPos != null) {
+                  setState(() {
+                    latController.text = newPos.latitude.toString();
+                    lonController.text = newPos.longitude.toString();
+                  });
+                }
+              },
+              icon: Icon(Icons.map),
+              label: Text("Pick on Google Map"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                foregroundColor: Colors.white,
+              ),
+            ),
+
+            SizedBox(height: 15),
+
+            // Save + Cancel Buttons
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final siteId = site['id'];
+
+                      await FirebaseFirestore.instance
+                          .collection('sites')
+                          .doc(siteId)
+                          .set({
+                        'latitude': latController.text,
+                        'longitude': lonController.text,
+                      }, SetOptions(merge: true));
+
+                      setState(() => isEditingCoordinates = false);
+
+                      await _updateWeatherForSelectedSite();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: EdgeInsets.all(14),
+                    ),
+                    child: Text("Save",
+                        style: TextStyle(color: Colors.white)),
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() => isEditingCoordinates = false);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: EdgeInsets.all(14),
+                    ),
+                    child: Text("Cancel",
+                        style: TextStyle(color: Colors.white)),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+    ],
+  );
+}
+
+
+Widget _buildFetchButton() {
+  return SizedBox(
+    width: double.infinity,
+    child: ElevatedButton.icon(
+      onPressed: _updateWeatherForSelectedSite,
+      icon: const Icon(Icons.cloud),
+      label: const Text("Get Weather"),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green,      // SAME AS Edit Coordinates
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        textStyle: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildAgriStatsRow() {
     return Row(
