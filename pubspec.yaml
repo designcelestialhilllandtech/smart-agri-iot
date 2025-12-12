@@ -55,7 +55,7 @@ dependencies:
   firebase_storage: ^13.0.4
   geolocator: ^14.0.2
   glassmorphism: ^3.0.0
-  google_maps_flutter: ^2.6.0
+  google_maps_flutter: ^2.6.1
 
 
 

@@ -5,6 +5,7 @@ import 'sensor_graph_page.dart';
 import 'graph_widget.dart';
 
 class FarmPage extends StatefulWidget {
+  
   final String siteId;
   final String siteName;
 
@@ -20,6 +21,15 @@ class FarmPage extends StatefulWidget {
 
 class _FarmPageState extends State<FarmPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+final List<Color> sensorColors = [
+  Colors.blue,
+  Colors.red,
+  Colors.green,
+  Colors.orange,
+  Colors.purple,
+  Colors.brown,
+  Colors.teal,
+];
 
   int moisture = 0;
   int ph = 0;
@@ -91,22 +101,68 @@ class _FarmPageState extends State<FarmPage> {
 
     return Scaffold(
       appBar: AppBar(title: Text(widget.siteName)),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+body: Padding(
+  padding: const EdgeInsets.all(16),
+  child: Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // ---------------- LEFT PANEL (GRAPHS) ----------------
+      Expanded(
+        flex: 3,
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 10),
               const Text(
-                "Sensor Configuration",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                "Sensor Graphs",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 20),
-              numberField("Moisture Sensors", moistureCtrl),
-              numberField("pH Sensors", phCtrl),
-              numberField("NPK Sensors", npkCtrl),
-              const SizedBox(height: 20),
-              ElevatedButton(
+              const SizedBox(height: 10),
+
+              sensorCard("Moisture Sensors", moisture, "moisture"),
+              sensorCard("pH Sensors", ph, "ph"),
+              sensorCard("NPK Sensors", npk, "npk"),
+            ],
+          ),
+        ),
+      ),
+
+      const SizedBox(width: 20),
+
+      // ---------------- RIGHT PANEL (SETTINGS) ----------------
+      Container(
+        width: 260,    // small fixed box
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade300),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 6,
+              offset: Offset(0, 3),
+            )
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Sensor Configuration",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+
+            numberField("Moisture Sensors", moistureCtrl),
+            numberField("pH Sensors", phCtrl),
+            numberField("NPK Sensors", npkCtrl),
+
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
                 onPressed: () {
                   setState(() {
                     moisture = int.tryParse(moistureCtrl.text) ?? 0;
@@ -117,20 +173,14 @@ class _FarmPageState extends State<FarmPage> {
                 },
                 child: const Text("Save"),
               ),
-              const SizedBox(height: 30),
-              const Text(
-                "Sensor Graphs",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              // Cards with expand + inline graphs
-              sensorCard("Moisture Sensors", moisture, "moisture"),
-              sensorCard("pH Sensors", ph, "ph"),
-              sensorCard("NPK Sensors", npk, "npk"),
-            ],
-          ),
+            )
+          ],
         ),
       ),
+    ],
+  ),
+),
+
     );
   }
 
@@ -151,68 +201,93 @@ class _FarmPageState extends State<FarmPage> {
 Widget sensorCard(String title, int count, String type) {
   return Card(
     margin: const EdgeInsets.symmetric(vertical: 8),
-    child: ExpansionTile(
-      tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-
-      // Disable default tapping on the header
-      initiallyExpanded: false,
-      maintainState: true,
-      onExpansionChanged: (_) {},
-
-      // ---------- HEADER ----------
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    child: Padding(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Tapping TITLE opens full combined graph
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => SensorGraphPage(
-                    siteId: widget.siteId,
-                    sensorType: type,
-                    sensorCount: count, // combined
+          // ---------- TITLE ROW ----------
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SensorGraphPage(
+                        siteId: widget.siteId,
+                        sensorType: type,
+                        sensorCount: count,   // full combined graph
+                      ),
+                    ),
+                  );
+                },
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              );
-            },
-            child: Text(title, style: const TextStyle(fontSize: 16)),
+              ),
+              Text(
+                "$count sensors",
+                style: const TextStyle(color: Colors.grey),
+              ),
+            ],
           ),
 
-          // Show sensor count
-          Text(
-            "$count sensors",
-            style: const TextStyle(color: Colors.grey),
-          ),
+          const SizedBox(height: 12),
+
+          // ---------- COMBINED GRAPH ----------
+          if (count > 0)
+            GraphWidget(
+              siteId: widget.siteId,
+              sensorType: type,
+              sensorId: 0,            // COMBINED graph
+              totalSensors: count,    // required for combined
+            )
+          else
+            const Text("No sensors configured"),
+
+          const SizedBox(height: 12),
+
+          // ---------- SENSOR BUTTONS ----------
+          if (count > 0)
+            Wrap(
+              spacing: 10,
+              children: [
+                for (int i = 1; i <= count; i++)
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => SensorGraphPage(
+                            siteId: widget.siteId,
+                            sensorType: type,
+                            sensorCount: i,    // FIXED HERE
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.show_chart, size: 16),
+                    label: Text("Sensor $i"),
+                  ),
+              ],
+            ),
         ],
       ),
-
-      // ---------- CHILDREN ----------
-      childrenPadding:
-          const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-
-      children: [
-        if (count <= 0)
-          const Center(child: Padding(
-            padding: EdgeInsets.all(12),
-            child: Text("No sensors configured"),
-          ))
-        else
-          for (int i = 1; i <= count; i++)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: GraphWidget(
-                siteId: widget.siteId,
-                sensorType: type,
-                sensorId: i, // separate sensor graph
-              ),
-            ),
-      ],
     ),
   );
 }
 
-
 }
+
+
+
